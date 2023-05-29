@@ -3,7 +3,7 @@
     "name": "OneHAPIC-2",
     "slug": "OneHAPIC-2",
     "version": "1.0.0",
-    "orientation": "portrait",
+    "orientation": "landscape",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
@@ -21,10 +21,16 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }
+      },
+      "package": "com.gdxStudio.OneHAPIC2"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "58c45cea-a78e-400e-95aa-a8e5b5bc2962"
+      }
     }
   }
 }

@@ -1,20 +1,34 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import React, {useContext, useState} from 'react';
+import {
+  StyleSheet,
+  ScrollView,
+  Text,
+  View
+} from 'react-native';
+import PianoRoll from './components/piano-roll';
+import Slider from './components/scroll-bar';
+import { CameraTargetContextProvider } from './context/piano-track-context';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+    flexGrow: 1
+  }
 });
+
+export default function App(){
+
+  return(
+    <CameraTargetContextProvider>
+      <GestureHandlerRootView style={{ flex: 1 }}>
+        <View style={styles.container}>
+          <Slider/>
+          <PianoRoll/>
+        </View>
+      </GestureHandlerRootView>
+    </CameraTargetContextProvider>
+  );
+}
