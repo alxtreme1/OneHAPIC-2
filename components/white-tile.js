@@ -1,7 +1,7 @@
-import React, { useRef, useEffect, useContext } from 'react';
+import React, { useRef, useEffect, useContext, useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { SoundPlayersContext } from '../context/sounds-context';
-import { TapGestureHandler } from 'react-native-gesture-handler';
+import { TapGestureHandler, State } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   whitePianoTile: {
@@ -16,28 +16,31 @@ const styles = StyleSheet.create({
 });
 
 export default function(props) {
-  const soundPlayers = useContext(SoundPlayersContext);
+  const { soundPlayers, defaultOctavaKeysNum } = useContext(SoundPlayersContext);
   const noteName = props.noteName;
   const player = soundPlayers[noteName];
+  const [isPlaying, setPlaying] = useState(false);
+
+  const setRateAndPlay = async () => {
+    await player.setRateAsync(1 / Math.pow(2, defaultOctavaKeysNum - props.velocity), false);
+    await handlePlay();
+  };
 
   const handlePlay = async () => {
-    await player.setRateAsync(1 / (5 - props.velocity + 1), false);
-  
-    if (player) {
-      try {
-        const status = await player.getStatusAsync();
-  
-        if (status.isLoaded) {
-          await player.setPositionAsync(0);
-          await player.playAsync();
-        } else {
-          console.log(`Sound player for note ${noteName} is not loaded.`);
-        }
-      } catch (error) {
-        console.log(`Error playing sound for note ${noteName}:`, error);
+    await player.setRateAsync(Math.pow(2, props.velocity - defaultOctavaKeysNum), false);
+
+    try {
+      const status = await player.getStatusAsync();
+
+      if (status.isLoaded) {
+        await player.setPositionAsync(0);
+        await player.playAsync();
+        setPlaying(true);
+      } else {
+        console.log(`Sound player for note ${noteName} is not loaded.`);
       }
-    } else {
-      console.log(`Sound player for note ${noteName} is not available.`);
+    } catch (error) {
+      console.log(`Error playing sound for note ${noteName}:`, error);
     }
   };
 
@@ -45,14 +48,31 @@ export default function(props) {
     if (player) {
       try {
         await player.stopAsync();
+        setPlaying(false);
       } catch (error) {
         console.log('Error stopping sound:', error);
       }
     }
   };
 
+  const handleTap = event => {
+    const { state, numberOfPointers } = event.nativeEvent;
+
+    if (state === State.BEGAN) {
+
+      if (numberOfPointers > 0) {
+        handlePlay();
+      }
+    } else if (state === State.END) {
+      
+      if (isPlaying) {
+        handleStop();
+      }
+    }
+  };
+
   return (
-    <TapGestureHandler onActivated={handlePlay}>
+    <TapGestureHandler onHandlerStateChange={handleTap}>
       <View style={styles.whitePianoTile} />
     </TapGestureHandler>
   );

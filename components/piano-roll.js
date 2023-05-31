@@ -7,8 +7,6 @@ import {
 } from 'react-native';
 import PadTrack from './pad-track';
 import { CameraTargetContext } from '../context/piano-track-context';
-import SoundPlayer from './audio-player';
-// import { IOScrollView } from 'react-native-intersection-observer';
 import { SoundPlayersProvider } from '../context/sounds-context';
 
 const styles = StyleSheet.create({
