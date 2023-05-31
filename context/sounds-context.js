@@ -5,22 +5,23 @@ const SoundPlayersContext = createContext();
 
 const SoundPlayersProvider = ({ children }) => {
   const [soundPlayers, setSoundPlayers] = useState({});
+  const defaultOctavaKeysNum = 3;
 
   useEffect(() => {
     const loadSoundPlayers = async () => {
       const soundPlayerPromises = {
-        c: Audio.Sound.createAsync(require('../assets/audio/c5.mp3')),
-        db: Audio.Sound.createAsync(require('../assets/audio/db5.mp3')),
-        d: Audio.Sound.createAsync(require('../assets/audio/d5.mp3')),
-        eb: Audio.Sound.createAsync(require('../assets/audio/eb5.mp3')),
-        e: Audio.Sound.createAsync(require('../assets/audio/e5.mp3')),
-        f: Audio.Sound.createAsync(require('../assets/audio/f5.mp3')),
-        gb: Audio.Sound.createAsync(require('../assets/audio/gb5.mp3')),
-        g: Audio.Sound.createAsync(require('../assets/audio/g5.mp3')),
-        ab: Audio.Sound.createAsync(require('../assets/audio/ab5.mp3')),
-        a: Audio.Sound.createAsync(require('../assets/audio/a5.mp3')),
-        bb: Audio.Sound.createAsync(require('../assets/audio/bb5.mp3')),
-        b: Audio.Sound.createAsync(require('../assets/audio/b5.mp3')),
+        c: Audio.Sound.createAsync(require('../assets/audio/c3.mp3')),
+        db: Audio.Sound.createAsync(require('../assets/audio/db3.mp3')),
+        d: Audio.Sound.createAsync(require('../assets/audio/d3.mp3')),
+        eb: Audio.Sound.createAsync(require('../assets/audio/eb3.mp3')),
+        e: Audio.Sound.createAsync(require('../assets/audio/e3.mp3')),
+        f: Audio.Sound.createAsync(require('../assets/audio/f3.mp3')),
+        gb: Audio.Sound.createAsync(require('../assets/audio/gb3.mp3')),
+        g: Audio.Sound.createAsync(require('../assets/audio/g3.mp3')),
+        ab: Audio.Sound.createAsync(require('../assets/audio/ab3.mp3')),
+        a: Audio.Sound.createAsync(require('../assets/audio/a3.mp3')),
+        bb: Audio.Sound.createAsync(require('../assets/audio/bb3.mp3')),
+        b: Audio.Sound.createAsync(require('../assets/audio/b3.mp3')),
       };
 
       const loadedSoundPlayers = {};
@@ -41,7 +42,7 @@ const SoundPlayersProvider = ({ children }) => {
   }, []);
 
   return (
-    <SoundPlayersContext.Provider value={soundPlayers}>
+    <SoundPlayersContext.Provider value={{soundPlayers, defaultOctavaKeysNum}}>
       {children}
     </SoundPlayersContext.Provider>
   );
