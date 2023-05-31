@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useContext, useState } from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
 import { SoundPlayersContext } from '../context/sounds-context';
-import { TapGestureHandler, State } from 'react-native-gesture-handler';
+import { LongPressGestureHandler, State } from 'react-native-gesture-handler';
 
 const styles = StyleSheet.create({
   whitePianoTile: {
@@ -55,7 +55,7 @@ export default function(props) {
     }
   };
 
-  const handleTap = event => {
+  const handleLongPress = event => {
     const { state, numberOfPointers } = event.nativeEvent;
 
     if (state === State.BEGAN) {
@@ -63,7 +63,7 @@ export default function(props) {
       if (numberOfPointers > 0) {
         handlePlay();
       }
-    } else if (state === State.END) {
+    } else if (state === State.END || state === State.CANCELLED || state === State.FAILED || state === State.UNDETERMINED) {
       
       if (isPlaying) {
         handleStop();
@@ -72,8 +72,10 @@ export default function(props) {
   };
 
   return (
-    <TapGestureHandler onHandlerStateChange={handleTap}>
+    <LongPressGestureHandler
+      onHandlerStateChange={handleLongPress}
+      minDurationMs={0} >
       <View style={styles.whitePianoTile} />
-    </TapGestureHandler>
+    </LongPressGestureHandler>
   );
 }

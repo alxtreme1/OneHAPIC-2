@@ -5,7 +5,7 @@ import {
   Text
 } from 'react-native';
 import { SoundPlayersContext } from '../context/sounds-context';
-import { TapGestureHandler, State } from 'react-native-gesture-handler';
+import { LongPressGestureHandler, State } from 'react-native-gesture-handler';
 
 const BLACK_TILE_WIDTH = 54.2;
 
@@ -45,6 +45,7 @@ export default function(props) {
   };
 
   const handlePlay = async () => {
+    clearInterval(fadeOutIntervalId);
     await player.setRateAsync(Math.pow(2, props.velocity - defaultOctavaKeysNum), false);
 
     try {
@@ -73,7 +74,7 @@ export default function(props) {
     }
   };
 
-  const handleTap = event => {
+  const handleLongPress = event => {
     const { state, numberOfPointers } = event.nativeEvent;
 
     if (state === State.BEGAN) {
@@ -81,7 +82,7 @@ export default function(props) {
       if (numberOfPointers > 0) {
         handlePlay();
       }
-    } else if (state === State.END) {
+    } else if (state === State.END || state === State.CANCELLED || state === State.FAILED || state === State.UNDETERMINED) {
 
       if (isPlaying) {
         handleStop();
@@ -89,41 +90,43 @@ export default function(props) {
     }
   };
   
+  let fadeOutIntervalId;
 
-    // async function stopAudio() {
-//   //   try {
-//   //     if (audio) {
-//   //       console.log('Stopping Sound');
+  async function fadeOut() {
+    try {
+      if (player) {
+        console.log('Stopping Sound');
 
-//   //       const fadeOutDuration = 1000; // Duration of the fade-out transition in milliseconds
-//   //       const fadeOutInterval = 100; // Time interval between fade-out steps in milliseconds
+        const fadeOutDuration = 800; // Duration of the fade-out transition in milliseconds
+        const fadeOutInterval = 100; // Time interval between fade-out steps in milliseconds
 
-//   //       const initialVolume = 1; // Get the initial volume
+        const initialVolume = 1; // Get the initial volume
 
-//   //       const volumeStep = initialVolume / (fadeOutDuration / fadeOutInterval);
-//   //       let currentVolume = initialVolume;
+        const volumeStep = initialVolume / (fadeOutDuration / fadeOutInterval);
+        let currentVolume = initialVolume;
 
-//   //       fadeOutIntervalId = setInterval(async () => {
-//   //         currentVolume -= volumeStep;
-//   //         if (currentVolume <= 0) {
-//   //           clearInterval(fadeOutIntervalId);
-//   //           currentVolume = 0;
-//   //           await audio?.stopAsync();
-//   //           await audio?.unloadAsync();
-//   //         }
+        fadeOutIntervalId = setInterval(async () => {
+          currentVolume -= volumeStep;
+          if (currentVolume <= 0) {
+            clearInterval(fadeOutIntervalId);
+            currentVolume = 0;
+            handleStop();
+            player?.setVolumeAsync(initialVolume);
+          }
 
-//   //         audio?.setVolumeAsync(currentVolume);
-//   //       }, fadeOutInterval);
-//   //     }
-//   //   } catch (error) {
-//   //     console.error('Error stopping sound:', error);
-//   //   }
-//   //   setAudio(null);
-//   // }
+          player?.setVolumeAsync(currentVolume);
+        }, fadeOutInterval);
+      }
+    } catch (error) {
+      console.error('Error stopping sound:', error);
+    }
+  }
 
   return(
-    <TapGestureHandler onHandlerStateChange={handleTap} >
+    <LongPressGestureHandler 
+      onHandlerStateChange={handleLongPress}
+      minDurationMs={0} >
       <View style={personalizedTile} />
-    </TapGestureHandler>
+    </LongPressGestureHandler>
   );
 }
