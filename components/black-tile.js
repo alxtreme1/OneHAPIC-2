@@ -82,7 +82,7 @@ export default function(props) {
       if (numberOfPointers > 0) {
         handlePlay();
       }
-    } else if (state === State.END || state === State.CANCELLED || state === State.FAILED || state === State.UNDETERMINED) {
+    } else if (state === State.END || state === State.FAILED || state === State.UNDETERMINED) {
 
       if (isPlaying) {
         handleStop();
